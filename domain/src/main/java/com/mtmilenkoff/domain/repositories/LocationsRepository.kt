@@ -5,5 +5,9 @@ import com.mtmilenkoff.domain.resource.DataResult
 import kotlinx.coroutines.flow.Flow
 
 interface LocationsRepository {
-    fun getLocations() : Flow<DataResult<List<Locations>>>
+    fun updateLocations() : Flow<DataResult<Unit>>
+
+    fun getLocations() : Flow<List<Locations>>
+
+    fun getFavoriteLocations() : Flow<List<Locations>>
 }

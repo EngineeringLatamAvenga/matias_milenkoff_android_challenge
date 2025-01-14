@@ -1,57 +1,61 @@
 package com.mtmilenkoff.data.repositories
 
 import com.mtmilenkoff.data.api.LocationsApi
-import com.mtmilenkoff.data.models.toDomainModel
+import com.mtmilenkoff.data.entities.mapToDomainModel
+import com.mtmilenkoff.data.models.toEntity
+import com.mtmilenkoff.data.persistence.LocationsDao
 import com.mtmilenkoff.domain.models.Locations
 import com.mtmilenkoff.domain.repositories.LocationsRepository
 import com.mtmilenkoff.domain.resource.DataResult
+import com.mtmilenkoff.domain.resource.DataResult.Failed
+import com.mtmilenkoff.domain.resource.DataResult.Loading
+import com.mtmilenkoff.domain.resource.DataResult.Success
 import com.mtmilenkoff.domain.resource.ErrorModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.map
 import retrofit2.Response
 
 class LocationsRepositoryImpl(
-    private val api: LocationsApi
+    private val api: LocationsApi,
+    private val locationsDao: LocationsDao
 ) : LocationsRepository {
-    override fun getLocations(): Flow<DataResult<List<Locations>>> {
-        return executeCall(apiCall = api.getLocations()) { result ->
-            result.map { it.toDomainModel() }
+
+    override fun updateLocations(): Flow<DataResult<Unit>> = flow {
+        when (val result = api.getLocations().makeCall()) {
+            is Success -> {
+                result.data?.let { data ->
+                    locationsDao.insertLocationsList(data.map { it.toEntity() })
+                } ?: run { emit(Failed(ErrorModel(404, "No data"))) }
+            }
+
+            is Failed -> {
+                emit(result)
+            }
+
+            is Loading -> {
+                emit(result)
+            }
         }
     }
-}
 
-/**
- * Type T = DTOs
- * Type U = Models
- */
-inline fun <T : Any, U : Any> executeCall(
-    apiCall: Response<T>,
-    crossinline mapper: (T) -> U
-): Flow<DataResult<U>> {
-    return flow {
-        when (val dataResult = apiCall.makeCall()) {
-            is DataResult.Success -> {
-                emit(DataResult.Success(dataResult.data?.let { mapper(it) }))
-            }
-
-            is DataResult.Failed -> {
-                emit(dataResult)
-            }
-
-            is DataResult.Loading -> {
-                emit(DataResult.Loading)
-            }
-
+    override fun getLocations(): Flow<List<Locations>> =
+        locationsDao.observeLocations().map { locations ->
+            locations.map { it.mapToDomainModel() }
         }
-    }.onStart { emit(DataResult.Loading) }
+
+
+    override fun getFavoriteLocations(): Flow<List<Locations>> =
+        locationsDao.observeFavoriteLocations().map { locations ->
+            locations.map { it.mapToDomainModel() }
+        }
 }
 
 fun <T : Any> Response<T>.makeCall(): DataResult<T> {
     val body = this.body()
     return if (this.isSuccessful.not() || body == null) {
-        DataResult.Failed(ErrorModel(this.code(), this.message()))
+        Failed(ErrorModel(this.code(), this.message()))
     } else {
-        DataResult.Success(body)
+        Success(body)
     }
 }

@@ -15,9 +15,9 @@ interface LocationsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertLocationsList(postEntity: List<LocationsEntity>)
 
-    @Query("SELECT * FROM LocationsEntity")
+    @Query("SELECT * FROM LocationsEntity WHERE name")
     fun observeLocations(): Flow<List<LocationsEntity>>
 
     @Query("SELECT * FROM LocationsEntity INNER JOIN FavoriteLocationEntity ON LocationsEntity.id = FavoriteLocationEntity.id")
-    fun observeFavoriteLocations(): List<LocationsEntity>
+    fun observeFavoriteLocations(): Flow<List<LocationsEntity>>
 }

@@ -1,6 +1,8 @@
 package com.mtmilenkoff.data.models
 
 import com.google.gson.annotations.SerializedName
+import com.mtmilenkoff.data.entities.CoordinatesEntity
+import com.mtmilenkoff.data.entities.LocationsEntity
 import com.mtmilenkoff.domain.models.Coordinates
 import com.mtmilenkoff.domain.models.Locations
 
@@ -21,11 +23,12 @@ fun LocationsDto.toDomainModel() = Locations(
     id = id,
     country = country,
     name = name,
-    coord = coord.toDomainModel()
+    coord = Coordinates(coord.lon, coord.lat)
 )
 
-
-fun CoordinatesDto.toDomainModel() = Coordinates(
-    lon = lon,
-    lat = lat
+fun LocationsDto.toEntity() = LocationsEntity(
+    id = id,
+    country = country,
+    name = name,
+    coord = CoordinatesEntity(coord.lon, coord.lat)
 )
