@@ -1,6 +1,7 @@
 package com.mtmilenkoff.data.repositories
 
 import com.mtmilenkoff.data.api.LocationsApi
+import com.mtmilenkoff.data.entities.FavoriteLocationEntity
 import com.mtmilenkoff.data.entities.mapToDomainModel
 import com.mtmilenkoff.data.models.toEntity
 import com.mtmilenkoff.data.persistence.LocationsDao
@@ -50,6 +51,16 @@ class LocationsRepositoryImpl (
         locationsDao.observeFavoriteLocations().map { locations ->
             locations.map { it.mapToDomainModel() }
         }
+
+    override fun addFavorite(id: Int) {
+        locationsDao.addFavorite(
+            FavoriteLocationEntity(id)
+        )
+    }
+
+    override fun deleteFavorite(id: Int) {
+        locationsDao.deleteFavorite(id)
+    }
 }
 
 fun <T : Any> Response<T>.makeCall(): DataResult<T> {

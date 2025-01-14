@@ -6,8 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mtmilenkoff.domain.models.Location
+import com.mtmilenkoff.domain.usecases.AddFavorite
 import com.mtmilenkoff.domain.usecases.GetFavoriteLocations
 import com.mtmilenkoff.domain.usecases.GetLocations
+import com.mtmilenkoff.domain.usecases.RemoveFavorite
 import com.mtmilenkoff.domain.usecases.UpdateLocations
 import com.mtmilenkoff.locationapp.MainViewModel.UIEvent.OnFavoriteLocation
 import com.mtmilenkoff.locationapp.MainViewModel.UIEvent.OnSelectLocation
@@ -22,16 +24,19 @@ import kotlinx.coroutines.launch
 class MainViewModel @Inject constructor(
     private val updateLocationUseCase: UpdateLocations,
     private val getFavoriteLocationsUseCase: GetFavoriteLocations,
-    private val getLocationsUseCase: GetLocations
+    private val getLocationsUseCase: GetLocations,
+    private val addFavoriteUSeCase: AddFavorite,
+    private val removeFavoriteUseCase: RemoveFavorite
 ) : ViewModel() {
 
     var uiState by mutableStateOf(UIState())
-    private set
+        private set
 
     data class UIState(
         val isLoading: Boolean = true,
         val locations: List<Location> = emptyList(),
-        val favoriteLocations: List<Location> = emptyList()
+        val favoriteLocations: List<Location> = emptyList(),
+        val selectedLocation: Location? = null
     )
 
     sealed class UIEvent {
@@ -43,7 +48,7 @@ class MainViewModel @Inject constructor(
     fun onUiEvent(event: UIEvent) {
         when (event) {
             OnUpdateLocations -> updateLocations()
-            is OnFavoriteLocation -> TODO()
+            is OnFavoriteLocation -> handleFavoriteLocation(event.location)
             is OnSelectLocation -> TODO()
         }
     }
@@ -89,7 +94,13 @@ class MainViewModel @Inject constructor(
         // todo
     }
 
-    private fun favoriteLocation(location: Location) {
-
+    private fun handleFavoriteLocation(location: Location) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (uiState.favoriteLocations.contains(location)) {
+                removeFavoriteUseCase(location.id)
+            } else {
+                addFavoriteUSeCase(location.id)
+            }
+        }
     }
 }

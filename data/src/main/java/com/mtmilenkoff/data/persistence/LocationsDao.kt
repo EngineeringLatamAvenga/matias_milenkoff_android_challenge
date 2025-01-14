@@ -1,10 +1,12 @@
 package com.mtmilenkoff.data.persistence
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.mtmilenkoff.data.entities.FavoriteLocationEntity
 import com.mtmilenkoff.data.entities.LocationsEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -30,4 +32,10 @@ interface LocationsDao {
 
     @Query("SELECT * FROM LocationsEntity INNER JOIN FavoriteLocationEntity ON LocationsEntity.id = FavoriteLocationEntity.id")
     fun observeFavoriteLocations(): Flow<List<LocationsEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun addFavorite(location: FavoriteLocationEntity)
+
+    @Query("DELETE FROM FavoriteLocationEntity WHERE id = :locationId")
+    fun deleteFavorite(locationId: Int)
 }
