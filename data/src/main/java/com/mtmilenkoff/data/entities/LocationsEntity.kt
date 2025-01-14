@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mtmilenkoff.domain.models.Coordinates
-import com.mtmilenkoff.domain.models.Locations
+import com.mtmilenkoff.domain.models.Location
 
 @Entity
 data class LocationsEntity(
@@ -22,7 +22,7 @@ data class CoordinatesEntity(
     val lat: Double
 )
 
-fun LocationsEntity.mapToDomainModel() = Locations(
+fun LocationsEntity.mapToDomainModel() = Location(
     id = id,
     country = country,
     name = name,

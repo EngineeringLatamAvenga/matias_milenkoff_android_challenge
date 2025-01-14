@@ -4,7 +4,7 @@ import com.mtmilenkoff.data.api.LocationsApi
 import com.mtmilenkoff.data.entities.mapToDomainModel
 import com.mtmilenkoff.data.models.toEntity
 import com.mtmilenkoff.data.persistence.LocationsDao
-import com.mtmilenkoff.domain.models.Locations
+import com.mtmilenkoff.domain.models.Location
 import com.mtmilenkoff.domain.repositories.LocationsRepository
 import com.mtmilenkoff.domain.resource.DataResult
 import com.mtmilenkoff.domain.resource.DataResult.Failed
@@ -41,12 +41,12 @@ class LocationsRepositoryImpl (
         }
     }
 
-    override fun getLocations(): Flow<List<Locations>> =
+    override fun getLocations(): Flow<List<Location>> =
         locationsDao.observeLocations().map { locations ->
             locations.map { it.mapToDomainModel() }
         }
 
-    override fun getFavoriteLocations(): Flow<List<Locations>> =
+    override fun getFavoriteLocations(): Flow<List<Location>> =
         locationsDao.observeFavoriteLocations().map { locations ->
             locations.map { it.mapToDomainModel() }
         }

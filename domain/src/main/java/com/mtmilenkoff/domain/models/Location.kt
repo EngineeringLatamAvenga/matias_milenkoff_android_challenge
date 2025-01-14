@@ -1,6 +1,6 @@
 package com.mtmilenkoff.domain.models
 
-data class Locations(
+data class Location(
     val id: Int,
     val country: String,
     val name: String,
