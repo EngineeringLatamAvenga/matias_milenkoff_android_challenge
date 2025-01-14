@@ -44,7 +44,6 @@ class LocationsRepositoryImpl(
             locations.map { it.mapToDomainModel() }
         }
 
-
     override fun getFavoriteLocations(): Flow<List<Locations>> =
         locationsDao.observeFavoriteLocations().map { locations ->
             locations.map { it.mapToDomainModel() }

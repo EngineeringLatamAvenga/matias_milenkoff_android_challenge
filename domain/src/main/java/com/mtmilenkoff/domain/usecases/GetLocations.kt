@@ -4,5 +4,5 @@ import com.mtmilenkoff.domain.models.Locations
 import kotlinx.coroutines.flow.Flow
 
 interface GetLocations {
-    fun invoke(): Flow<List<Locations>>
+    operator fun invoke(): Flow<List<Locations>>
 }

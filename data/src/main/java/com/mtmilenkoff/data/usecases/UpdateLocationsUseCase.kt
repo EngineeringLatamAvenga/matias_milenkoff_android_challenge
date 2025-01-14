@@ -4,5 +4,5 @@ import com.mtmilenkoff.domain.repositories.LocationsRepository
 import com.mtmilenkoff.domain.usecases.UpdateLocations
 
 class UpdateLocationsUseCase(private val repository: LocationsRepository): UpdateLocations {
-    override fun invoke() = repository.updateLocations()
+    override operator fun invoke() = repository.updateLocations()
 }
