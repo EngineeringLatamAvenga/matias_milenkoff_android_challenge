@@ -107,8 +107,8 @@ test = [
 ]
 
 hilt = [
-    "hilt-compiler",
-    "hilt-core"
+    "hilt-core",
+    "hilt-android"
 ]
 
 network = [
@@ -120,7 +120,6 @@ network = [
 
 room = [
     "room",
-    "room-compiler",
     "room-ktx",
     "room-testing"
 ]

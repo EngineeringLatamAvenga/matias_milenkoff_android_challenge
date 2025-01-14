@@ -1,6 +1,5 @@
 package com.mtmilenkoff.data.repositories
 
-import android.util.Log
 import com.mtmilenkoff.data.api.LocationsApi
 import com.mtmilenkoff.data.models.toDomainModel
 import com.mtmilenkoff.domain.models.Locations
@@ -12,10 +11,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import retrofit2.Response
 
-class LocationRepositoryImpl(
-    val api: LocationsApi
+class LocationsRepositoryImpl(
+    private val api: LocationsApi
 ) : LocationsRepository {
-    override suspend fun getLocations(): Flow<DataResult<List<Locations>>> {
+    override fun getLocations(): Flow<DataResult<List<Locations>>> {
         return executeCall(apiCall = api.getLocations()) { result ->
             result.map { it.toDomainModel() }
         }
