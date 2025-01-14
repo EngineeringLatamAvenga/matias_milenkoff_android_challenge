@@ -25,7 +25,7 @@ interface LocationsDao {
         insertLocationsList(postEntity)
     }
 
-    @Query("SELECT * FROM LocationsEntity WHERE name")
+    @Query("SELECT * FROM LocationsEntity")
     fun observeLocations(): Flow<List<LocationsEntity>>
 
     @Query("SELECT * FROM LocationsEntity INNER JOIN FavoriteLocationEntity ON LocationsEntity.id = FavoriteLocationEntity.id")
