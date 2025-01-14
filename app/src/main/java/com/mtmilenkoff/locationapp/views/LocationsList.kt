@@ -37,6 +37,7 @@ internal fun LocationsList(
     modifier: Modifier = Modifier,
     locations: List<Location>,
     favoriteLocations: List<Location>,
+    selectedLocationId: Int?,
     onLocationClick: (Location) -> Unit,
     onFavoriteClick: (Location) -> Unit
 ) {
@@ -50,7 +51,8 @@ internal fun LocationsList(
                 location = location,
                 onLocationClick = { onLocationClick(location) },
                 onFavoriteClick = { onFavoriteClick(location) },
-                isFavorite = favoriteLocations.contains(location)
+                isFavorite = favoriteLocations.contains(location),
+                isSelected = location.id == selectedLocationId
             )
         }
     }
@@ -62,12 +64,19 @@ private fun LocationItem(
     location: Location,
     onLocationClick: (Location) -> Unit,
     onFavoriteClick: (Location) -> Unit,
-    isFavorite: Boolean
+    isFavorite: Boolean,
+    isSelected: Boolean
 ) {
     Row(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(
+                if (isSelected) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surface
+                }
+            )
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline,
@@ -117,7 +126,8 @@ private fun LocationItemPreview() {
             ),
             onLocationClick = {},
             onFavoriteClick = {},
-            isFavorite = true
+            isFavorite = true,
+            isSelected = true
         )
     }
 }
@@ -143,7 +153,8 @@ private fun LocationsListPreview() {
             ),
             onLocationClick = {},
             onFavoriteClick = {},
-            favoriteLocations = listOf()
+            favoriteLocations = listOf(),
+            selectedLocationId = null
         )
     }
 }

@@ -22,6 +22,9 @@ ksp-plugin = "2.1.0-1.0.29"
 okhttp = "4.12.0"
 splash = "1.2.0-alpha02"
 navigationCompose = "2.8.5"
+maps-compose = "6.1.2"
+play-services = "19.0.0"
+secrets-maps = "2.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +61,10 @@ retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", ve
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 okhttp-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 
+# Maps
+google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
+google-play-services = { module = "com.google.android.gms:play-services-maps", version.ref = "play-services" }
+secrets-Gradle = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secrets-maps" }
 
 
 # Testing
@@ -77,6 +84,7 @@ room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -85,6 +93,8 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
+secrets-pluginGradle = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets-maps" }
+
 
 [bundles]
 core-android = [

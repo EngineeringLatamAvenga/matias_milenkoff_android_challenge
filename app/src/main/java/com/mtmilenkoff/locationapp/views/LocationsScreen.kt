@@ -36,6 +36,7 @@ private fun CompleteContent(modifier: Modifier = Modifier, viewModel: MainViewMo
             modifier = Modifier.weight(0.4f),
             locations = state.locations,
             favoriteLocations = state.favoriteLocations,
+            selectedLocationId = state.selectedLocation?.id,
             onLocationClick = { viewModel.onUiEvent(UIEvent.OnSelectLocation(it)) },
             onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) }
         )
@@ -59,6 +60,7 @@ private fun IndividualScreenContent(modifier: Modifier = Modifier, viewModel: Ma
             LocationsList(
                 locations = state.locations,
                 favoriteLocations = state.favoriteLocations,
+                selectedLocationId = state.selectedLocation?.id,
                 onLocationClick = { viewModel.onUiEvent(UIEvent.OnSelectLocation(it)) },
                 onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) }
             )

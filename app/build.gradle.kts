@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.secrets.pluginGradle)
 }
 
 android {
@@ -18,6 +19,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -59,6 +64,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.appcompat)
+    implementation(libs.google.maps.compose)
+    implementation(libs.google.play.services)
+    implementation(libs.secrets.gradle)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -14,14 +14,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        val map_key: String by project
-        buildConfigField("String", "map_key", map_key)
-    }
-
-
-    buildFeatures {
-        buildConfig = true
     }
 
     buildTypes {

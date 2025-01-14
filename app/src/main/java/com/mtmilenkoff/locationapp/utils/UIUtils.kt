@@ -5,7 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 
 /**
- * Returns weather the screen is in Landscape
+ * Returns whether the screen should be shown in Landscape mode
+ * TODO add Size condition for Ipads if necessary
  */
 @Composable
 fun isScreenLandscape(): Boolean {
