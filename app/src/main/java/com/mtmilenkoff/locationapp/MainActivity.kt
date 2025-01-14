@@ -7,7 +7,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.compose.LocationAppTheme
-import com.mtmilenkoff.locationapp.MainViewModel.UIEvent
 import com.mtmilenkoff.locationapp.views.LocationsScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        mainViewModel.onUiEvent(UIEvent.OnUpdateLocations)
         enableEdgeToEdge()
 
         setContent {

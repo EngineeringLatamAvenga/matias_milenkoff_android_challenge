@@ -43,8 +43,10 @@ private fun CompleteContent(modifier: Modifier = Modifier, viewModel: MainViewMo
             filterText = state.filterText
         )
         LocationsMap(
+            showTopBar = false,
             modifier = Modifier.weight(0.6f),
-            location = state.selectedLocation
+            location = state.selectedLocation,
+            onMapBack = { viewModel.onUiEvent(UIEvent.OnSelectLocation(null)) }
         )
     }
 }
@@ -54,8 +56,10 @@ private fun IndividualScreenContent(modifier: Modifier = Modifier, viewModel: Ma
     val state = viewModel.uiState
     if (state.selectedLocation != null) {
         LocationsMap(
+            showTopBar = true,
             modifier = modifier,
-            location = state.selectedLocation
+            location = state.selectedLocation,
+            onMapBack = { viewModel.onUiEvent(UIEvent.OnSelectLocation(null)) }
         )
     } else {
         Column(modifier = modifier) {

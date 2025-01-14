@@ -57,15 +57,17 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun updateLocations() {
-        if (uiState.favoriteLocations.isNotEmpty()) return
+    init {
+        onUiEvent(OnUpdateLocations)
+    }
 
+    private fun updateLocations() {
         viewModelScope.launch(Dispatchers.IO) {
             executeUseCase(
                 useCase = updateLocationUseCase(),
                 onSuccess = {
-                    getLocations()
                     getFavoriteLocations()
+                    getLocations()
                 },
                 onLoading = {
                     uiState = uiState.copy(isLoading = true)
@@ -79,8 +81,10 @@ class MainViewModel @Inject constructor(
 
     private fun getLocations() {
         viewModelScope.launch(Dispatchers.IO) {
-            uiState = uiState.copy(locations = getLocationsUseCase(uiState.filterText))
-            uiState = uiState.copy(isLoading = false)
+            uiState = uiState.copy(
+                locations = getLocationsUseCase(uiState.filterText),
+                isLoading = false
+            )
         }
     }
 
@@ -107,6 +111,8 @@ class MainViewModel @Inject constructor(
     }
 
     private fun filterLocations(filter: String) {
+        if (uiState.filterText == filter) return
+
         uiState = uiState.copy(filterText = filter)
         getLocations()
     }

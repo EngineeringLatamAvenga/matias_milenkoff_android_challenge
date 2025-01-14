@@ -52,7 +52,7 @@ internal fun LocationsList(
 ) {
     LazyColumn(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+        contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
         stickyHeader {
             FilterBar(filterText = filterText, filterTyping = filterTyping)
@@ -76,7 +76,11 @@ private fun FilterBar(
     filterText: String,
     filterTyping: (String) -> Unit
 ) {
-    Column(modifier = modifier.padding(vertical = 8.dp)) {
+    Column(
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(vertical = 8.dp)
+    ) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = filterText,
@@ -113,12 +117,13 @@ private fun LocationItem(
 ) {
     Row(
         modifier = modifier
+            .clickable { onLocationClick(location) }
             .clip(MaterialTheme.shapes.medium)
             .background(
                 if (isSelected) {
                     MaterialTheme.colorScheme.primaryContainer
                 } else {
-                    MaterialTheme.colorScheme.surface
+                    MaterialTheme.colorScheme.surfaceVariant
                 }
             )
             .border(
@@ -127,8 +132,7 @@ private fun LocationItem(
                 shape = MaterialTheme.shapes.medium
             )
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth()
-            .clickable { onLocationClick(location) },
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

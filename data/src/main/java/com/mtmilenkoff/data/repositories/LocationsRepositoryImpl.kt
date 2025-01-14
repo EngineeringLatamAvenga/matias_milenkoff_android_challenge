@@ -27,7 +27,7 @@ class LocationsRepositoryImpl (
         when (val result = api.getLocations().makeCall()) {
             is Success -> {
                 result.data?.let { data ->
-                    locationsDao.deleteAndInsert(data.map { it.toEntity() }.sortedBy { it.name })
+                    locationsDao.deleteAndInsert(data.map { it.toEntity() })
                 } ?: run { emit(Failed(ErrorModel(404, "No data"))) }
                 emit(Success(Unit))
             }
