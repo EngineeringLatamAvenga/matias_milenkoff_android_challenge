@@ -27,23 +27,27 @@ class LocationsRepositoryImpl (
 
     override fun updateLocations(): Flow<DataResult<Unit>> = flow {
         emit(Loading)
-        when (val result = api.getLocations().makeCall()) {
-            is Success -> {
-                result.data?.let { data ->
-                    locationsDao.deleteAndInsert(
-                        data.map { it.toEntity() }
-                    )
-                } ?: run { emit(Failed(ErrorModel(404, "No data"))) }
-                emit(Success(Unit))
-            }
+        try {
+            when (val result = api.getLocations().makeCall()) {
+                is Success -> {
+                    result.data?.let { data ->
+                        locationsDao.deleteAndInsert(
+                            data.map { it.toEntity() }
+                        )
+                    } ?: run { emit(Failed(ErrorModel(404, "No data"))) }
+                    emit(Success(Unit))
+                }
 
-            is Failed -> {
-                emit(result)
-            }
+                is Failed -> {
+                    emit(result)
+                }
 
-            is Loading -> {
-                emit(result)
+                is Loading -> {
+                    emit(result)
+                }
             }
+        } catch (e: Exception) {
+            emit(Failed(ErrorModel(500, e.message ?: "Unknown error")))
         }
     }
 

@@ -22,11 +22,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
@@ -55,6 +56,13 @@ class MainViewModel @Inject constructor(
 
     private val _filter = MutableStateFlow("")
     val filter: StateFlow<String> = _filter
+
+    sealed class SideEffect {
+        data class ShowError(val message: String) : SideEffect()
+    }
+
+    private val _sideEffect = Channel<SideEffect>(Channel.BUFFERED)
+    val sideEffect = _sideEffect.receiveAsFlow()
 
     sealed class UIEvent {
         data object OnUpdateLocations : UIEvent()
@@ -102,6 +110,9 @@ class MainViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = true)
                 },
                 onError = {
+                    _sideEffect.send(
+                        SideEffect.ShowError(it.message.ifEmpty { "Error trying to fetch data" })
+                    )
                     uiState = uiState.copy(isLoading = false)
                 }
             )
