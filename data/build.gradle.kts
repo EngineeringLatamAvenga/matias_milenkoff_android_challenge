@@ -45,6 +45,9 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.bundles.network)
     implementation(libs.bundles.room)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.common)
+
 
     implementation(libs.bundles.hilt)
     ksp(libs.hilt.compiler)

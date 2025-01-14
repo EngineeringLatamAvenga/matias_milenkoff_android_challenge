@@ -1,5 +1,9 @@
 package com.mtmilenkoff.data.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.mtmilenkoff.data.api.LocationsApi
 import com.mtmilenkoff.data.entities.FavoriteLocationEntity
 import com.mtmilenkoff.data.entities.mapToDomainModel
@@ -42,8 +46,14 @@ class LocationsRepositoryImpl (
         }
     }
 
-    override fun getLocations(filter: String): List<Location> =
-        locationsDao.observeLocations(filter).map { it.mapToDomainModel() }
+    override fun getLocations(filter: String): Flow<PagingData<Location>> = Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { locationsDao.getLocations(filter)}
+        ).flow.map { data -> data.map { it.mapToDomainModel() } }
+
 
     override fun getFavoriteLocations(filter: String): Flow<List<Location>> =
         locationsDao.observeFavoriteLocations(filter).map { locations ->
@@ -69,3 +79,5 @@ fun <T : Any> Response<T>.makeCall(): DataResult<T> {
         Success(body)
     }
 }
+
+const val PAGE_SIZE = 25

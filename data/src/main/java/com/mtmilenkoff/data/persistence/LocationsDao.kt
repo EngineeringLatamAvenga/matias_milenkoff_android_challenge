@@ -1,5 +1,6 @@
 package com.mtmilenkoff.data.persistence
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -27,7 +28,7 @@ interface LocationsDao {
     }
 
     @Query("SELECT * FROM LocationsEntity WHERE name LIKE :filter || '%' ORDER BY name ASC, country ASC")
-    fun observeLocations(filter: String): List<LocationsEntity>
+    fun getLocations(filter: String): PagingSource<Int, LocationsEntity>
 
     @Query(
         "SELECT * FROM LocationsEntity " +

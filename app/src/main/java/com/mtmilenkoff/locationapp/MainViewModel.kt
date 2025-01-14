@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.mtmilenkoff.domain.models.Location
 import com.mtmilenkoff.domain.usecases.AddFavorite
 import com.mtmilenkoff.domain.usecases.GetFavoriteLocations
@@ -19,8 +21,18 @@ import com.mtmilenkoff.locationapp.utils.executeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val updateLocationUseCase: UpdateLocations,
@@ -35,11 +47,16 @@ class MainViewModel @Inject constructor(
 
     data class UIState(
         val isLoading: Boolean = true,
-        val locations: List<Location> = emptyList(),
         val favoriteLocations: List<Location> = emptyList(),
         val selectedLocation: Location? = null,
-        val filterText: String = ""
+        val filterFavoritesSelected: Boolean = false
     )
+
+    private val _locations = MutableStateFlow<PagingData<Location>>(PagingData.empty())
+    val locations: Flow<PagingData<Location>> = _locations
+
+    private val _filter = MutableStateFlow("")
+    val filter: StateFlow<String> = _filter
 
     sealed class UIEvent {
         data object OnUpdateLocations : UIEvent()
@@ -59,7 +76,15 @@ class MainViewModel @Inject constructor(
 
     init {
         onUiEvent(OnUpdateLocations)
+        viewModelScope.launch(Dispatchers.IO) {
+            _filter.debounce(500L).collectLatest { newQuery ->
+                getLocationsUseCase(newQuery).cachedIn(viewModelScope).collectLatest { pagingData ->
+                    _locations.value = pagingData
+                }
+            }
+        }
     }
+
 
     private fun updateLocations() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -81,16 +106,19 @@ class MainViewModel @Inject constructor(
 
     private fun getLocations() {
         viewModelScope.launch(Dispatchers.IO) {
-            uiState = uiState.copy(
-                locations = getLocationsUseCase(uiState.filterText),
-                isLoading = false
-            )
+            getLocationsUseCase(_filter.value).cachedIn(viewModelScope).collectLatest { data ->
+                _locations.value = data
+            }
         }
+        uiState = uiState.copy(isLoading = false)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getFavoriteLocations() {
         viewModelScope.launch(Dispatchers.IO) {
-            getFavoriteLocationsUseCase(uiState.filterText).collect {
+            _filter.flatMapLatest {
+                getFavoriteLocationsUseCase(it)
+                }.collect {
                 uiState = uiState.copy(favoriteLocations = it)
             }
         }
@@ -111,9 +139,6 @@ class MainViewModel @Inject constructor(
     }
 
     private fun filterLocations(filter: String) {
-        if (uiState.filterText == filter) return
-
-        uiState = uiState.copy(filterText = filter)
-        getLocations()
+        _filter.value = filter
     }
 }

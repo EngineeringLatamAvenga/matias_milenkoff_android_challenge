@@ -25,6 +25,8 @@ navigationCompose = "2.8.5"
 maps-compose = "6.1.2"
 play-services = "19.0.0"
 secrets-maps = "2.0.1"
+paging = "3.3.5"
+paging-compose = "3.3.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -83,6 +85,11 @@ room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
+# Paging
+paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging"}
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging-compose"}
+paging-common = { module = "androidx.paging:paging-common-ktx", version.ref = "paging"}
+paging-room = { module = "androidx.room:room-paging", version.ref = "room"}
 
 
 [plugins]
@@ -133,5 +140,6 @@ network = [
 room = [
     "room",
     "room-ktx",
-    "room-testing"
+    "room-testing",
+    "paging-room"
 ]

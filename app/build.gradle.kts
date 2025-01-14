@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.google.maps.compose)
     implementation(libs.google.play.services)
     implementation(libs.secrets.gradle)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

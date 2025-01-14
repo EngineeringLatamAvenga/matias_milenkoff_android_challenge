@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mtmilenkoff.locationapp.MainViewModel
 import com.mtmilenkoff.locationapp.MainViewModel.UIEvent
@@ -22,7 +24,6 @@ fun LocationsScreen(
             IndividualScreenContent(modifier = Modifier.padding(it), viewModel = viewModel)
         }
     }
-
     BackHandler(enabled = viewModel.uiState.selectedLocation != null) {
         viewModel.onUiEvent(UIEvent.OnSelectLocation(null))
     }
@@ -31,16 +32,18 @@ fun LocationsScreen(
 @Composable
 private fun CompleteContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
     val state = viewModel.uiState
+    val filter by viewModel.filter.collectAsState()
     Row(modifier = modifier) {
         LocationsList(
             modifier = Modifier.weight(0.4f),
-            locations = state.locations,
+            pagedLocations = viewModel.locations,
             favoriteLocations = state.favoriteLocations,
             selectedLocationId = state.selectedLocation?.id,
             onLocationClick = { viewModel.onUiEvent(UIEvent.OnSelectLocation(it)) },
             onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) },
             filterTyping = { viewModel.onUiEvent(UIEvent.OnFilterTyping(it)) },
-            filterText = state.filterText
+            filterText = filter,
+            onFilterByFavoriteClick = {}
         )
         LocationsMap(
             showTopBar = false,
@@ -54,6 +57,7 @@ private fun CompleteContent(modifier: Modifier = Modifier, viewModel: MainViewMo
 @Composable
 private fun IndividualScreenContent(modifier: Modifier = Modifier, viewModel: MainViewModel) {
     val state = viewModel.uiState
+    val filter by viewModel.filter.collectAsState()
     if (state.selectedLocation != null) {
         LocationsMap(
             showTopBar = true,
@@ -64,13 +68,14 @@ private fun IndividualScreenContent(modifier: Modifier = Modifier, viewModel: Ma
     } else {
         Column(modifier = modifier) {
             LocationsList(
-                locations = state.locations,
+                pagedLocations = viewModel.locations,
                 favoriteLocations = state.favoriteLocations,
                 selectedLocationId = state.selectedLocation?.id,
                 onLocationClick = { viewModel.onUiEvent(UIEvent.OnSelectLocation(it)) },
                 onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) },
                 filterTyping = { viewModel.onUiEvent(UIEvent.OnFilterTyping(it)) },
-                filterText = state.filterText
+                filterText = filter,
+                onFilterByFavoriteClick = {}
             )
         }
     }
