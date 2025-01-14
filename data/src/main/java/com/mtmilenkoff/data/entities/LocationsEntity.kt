@@ -2,11 +2,17 @@ package com.mtmilenkoff.data.entities
 
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.mtmilenkoff.domain.models.Coordinates
 import com.mtmilenkoff.domain.models.Location
 
-@Entity
+@Entity(
+    indices = [
+        Index(value = ["name"]),
+        Index(value = ["id"])
+    ]
+)
 data class LocationsEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,

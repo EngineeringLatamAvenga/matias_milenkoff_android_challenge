@@ -51,7 +51,7 @@ class LocationsRepositoryImpl (
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
-                enablePlaceholders = false
+                enablePlaceholders = true
             ),
             pagingSourceFactory = { locationsDao.getLocations(filter)}
         ).flow.map { data -> data.map { it.location.mapToDomainModel(it.favorite != null) } }
@@ -61,7 +61,7 @@ class LocationsRepositoryImpl (
     override fun getFavoriteLocations(filter: String): Flow<PagingData<Location>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
-            enablePlaceholders = false
+            enablePlaceholders = true
         ),
         pagingSourceFactory = { locationsDao.getPaginatedFavorites(filter)}
     ).flow.map { data -> data.map { it.mapToDomainModel(true) } }

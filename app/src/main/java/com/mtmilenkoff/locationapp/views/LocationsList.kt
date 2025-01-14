@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +58,8 @@ internal fun LocationsList(
     favoritesSelected: Boolean
 ) {
     val locations = pagedLocations.collectAsLazyPagingItems()
+    val columnState = rememberLazyListState()
+
     Column(modifier.background(MaterialTheme.colorScheme.surface)) {
         FilterBar(
             filterText = filterText,
@@ -63,24 +67,29 @@ internal fun LocationsList(
             onFilterByFavoriteClick = onFilterByFavoriteClick,
             favoritesSelected = favoritesSelected
         )
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 8.dp)
-        ) {
-            items(
-                count = locations.itemCount,
-                key = locations.itemKey { it.id }
-            ) { index ->
-                val location = locations[index]
-                if (location != null) {
-                    LocationItem(
-                        location = location,
-                        onLocationClick = { onLocationClick(location) },
-                        onFavoriteClick = { onFavoriteClick(location) },
-                        isSelected = location.id == selectedLocationId
-                    )
+        if (locations.itemCount != 0) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                state = columnState
+            ) {
+                items(
+                    count = locations.itemCount,
+                    key = locations.itemKey { it.id }
+                ) { index ->
+                    val location = locations[index]
+                    if (location != null) {
+                        LocationItem(
+                            location = location,
+                            onLocationClick = onLocationClick,
+                            onFavoriteClick = onFavoriteClick,
+                            isSelected = location.id == selectedLocationId,
+                        )
+                    } else {
+                        PlaceHolderItem()
+                    }
+                    Spacer(Modifier.height(8.dp))
                 }
-                Spacer(Modifier.height(8.dp))
             }
         }
     }
@@ -130,6 +139,25 @@ private fun FilterBar(
 }
 
 @Composable
+private fun PlaceHolderItem(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = MaterialTheme.shapes.medium
+            )
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+@Composable
 private fun LocationItem(
     modifier: Modifier = Modifier,
     location: Location,
@@ -165,7 +193,11 @@ private fun LocationItem(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.width(6.dp))
-        IconButton(onClick = { onFavoriteClick(location) }) {
+        IconButton(
+            onClick = {
+                onFavoriteClick(location)
+            }
+        ) {
             if (location.isFavorite) {
                 Icon(
                     painter = painterResource(R.drawable.ic_favorite),
