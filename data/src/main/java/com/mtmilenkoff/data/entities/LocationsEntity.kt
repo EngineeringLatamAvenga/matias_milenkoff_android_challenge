@@ -14,7 +14,7 @@ import com.mtmilenkoff.domain.models.Location
     ]
 )
 data class LocationsEntity(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int,
     val country: String,
     val name: String,

@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.secrets.gradle)
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
+    implementation(libs.room.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
