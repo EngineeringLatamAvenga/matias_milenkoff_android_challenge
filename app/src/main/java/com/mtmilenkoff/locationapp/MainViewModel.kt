@@ -10,6 +10,7 @@ import com.mtmilenkoff.locationapp.MainViewModel.UIEvent.OnUpdateLocations
 import com.mtmilenkoff.locationapp.utils.executeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -21,7 +22,7 @@ class MainViewModel @Inject constructor(
     private set
 
     data class UIState(
-        val isLoading: Boolean = false
+        val isLoading: Boolean = true
     )
 
     sealed class UIEvent {
@@ -35,7 +36,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun updateLocation() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             executeUseCase(
                 useCase = updateLocationUseCase.invoke(),
                 onSuccess = {

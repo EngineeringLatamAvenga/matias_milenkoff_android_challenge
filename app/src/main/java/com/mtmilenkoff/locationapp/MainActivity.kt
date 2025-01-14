@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.mtmilenkoff.locationapp.MainViewModel.UIEvent
@@ -25,7 +26,11 @@ class MainActivity : AppCompatActivity() {
         setContent {
             LocationAppTheme {
                 val state = mainViewModel.uiState
-                mainViewModel.onUiEvent(UIEvent.OnUpdateLocations)
+
+                LaunchedEffect(Unit) {
+                    mainViewModel.onUiEvent(UIEvent.OnUpdateLocations)
+                }
+
                 splashScreen.setKeepOnScreenCondition { state.isLoading }
                 MainNavigation()
             }

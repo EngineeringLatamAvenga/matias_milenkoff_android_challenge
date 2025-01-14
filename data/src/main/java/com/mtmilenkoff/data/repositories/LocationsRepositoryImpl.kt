@@ -28,6 +28,7 @@ class LocationsRepositoryImpl (
                 result.data?.let { data ->
                     locationsDao.deleteAndInsert(data.map { it.toEntity() })
                 } ?: run { emit(Failed(ErrorModel(404, "No data"))) }
+                emit(Success(Unit))
             }
 
             is Failed -> {
