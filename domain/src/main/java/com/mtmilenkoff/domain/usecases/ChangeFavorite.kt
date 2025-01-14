@@ -1,5 +1,5 @@
 package com.mtmilenkoff.domain.usecases
 
-interface AddFavorite {
+interface ChangeFavorite {
     operator fun invoke(id: Int)
 }

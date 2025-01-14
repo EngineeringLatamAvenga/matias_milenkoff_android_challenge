@@ -8,7 +8,7 @@ import com.mtmilenkoff.domain.models.Location
 
 @Entity
 data class LocationsEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     val country: String,
     val name: String,
@@ -22,9 +22,10 @@ data class CoordinatesEntity(
     val lat: Double
 )
 
-fun LocationsEntity.mapToDomainModel() = Location(
+fun LocationsEntity.mapToDomainModel(isFavorite: Boolean) = Location(
     id = id,
     country = country,
     name = name,
-    coord = Coordinates(coord.lon, coord.lat)
+    coord = Coordinates(coord.lon, coord.lat),
+    isFavorite = isFavorite
 )

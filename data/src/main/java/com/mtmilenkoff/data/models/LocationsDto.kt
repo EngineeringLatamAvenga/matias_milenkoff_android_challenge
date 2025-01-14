@@ -19,16 +19,17 @@ data class CoordinatesDto(
     val lat: Double
 )
 
-fun LocationsDto.toDomainModel() = Location(
+fun LocationsDto.toDomainModel(isFavorite: Boolean) = Location(
     id = id,
     country = country,
     name = name,
-    coord = Coordinates(coord.lon, coord.lat)
+    coord = Coordinates(coord.lon, coord.lat),
+    isFavorite = isFavorite
 )
 
 fun LocationsDto.toEntity() = LocationsEntity(
     id = id,
     country = country,
     name = name,
-    coord = CoordinatesEntity(coord.lon, coord.lat)
+    coord = CoordinatesEntity(coord.lon, coord.lat),
 )

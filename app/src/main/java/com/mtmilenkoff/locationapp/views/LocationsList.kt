@@ -1,11 +1,9 @@
 package com.mtmilenkoff.locationapp.views
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,17 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -39,10 +32,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.example.compose.LocationAppTheme
 import com.mtmilenkoff.domain.models.Coordinates
@@ -52,68 +43,44 @@ import com.mtmilenkoff.locationapp.utils.getFullName
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun LocationsList(
     modifier: Modifier = Modifier,
     pagedLocations: Flow<PagingData<Location>>,
-    favoriteLocations: List<Location>,
     selectedLocationId: Int?,
     onLocationClick: (Location) -> Unit,
     onFavoriteClick: (Location) -> Unit,
     filterTyping: (String) -> Unit,
     filterText: String,
-    onFilterByFavoriteClick: () -> Unit,
+    onFilterByFavoriteClick: (Boolean) -> Unit,
+    favoritesSelected: Boolean
 ) {
     val locations = pagedLocations.collectAsLazyPagingItems()
     Column(modifier.background(MaterialTheme.colorScheme.surface)) {
         FilterBar(
             filterText = filterText,
             filterTyping = filterTyping,
-            onFilterByFavoriteClick = onFilterByFavoriteClick
+            onFilterByFavoriteClick = onFilterByFavoriteClick,
+            favoritesSelected = favoritesSelected
         )
-        Box(Modifier.fillMaxSize()) {
-            LazyColumn(
-                contentPadding = PaddingValues(horizontal = 8.dp)
-            ) {
-                items(
-                    count = locations.itemCount,
-                    key = locations.itemKey { it.id }
-                ) { index ->
-                    val location = locations[index]
-                    if (location != null) {
-                        LocationItem(
-                            location = location,
-                            onLocationClick = { onLocationClick(location) },
-                            onFavoriteClick = { onFavoriteClick(location) },
-                            isFavorite = favoriteLocations.contains(location),
-                            isSelected = location.id == selectedLocationId
-                        )
-                    }
-                    Spacer(Modifier.height(8.dp))
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            items(
+                count = locations.itemCount,
+                key = locations.itemKey { it.id }
+            ) { index ->
+                val location = locations[index]
+                if (location != null) {
+                    LocationItem(
+                        location = location,
+                        onLocationClick = { onLocationClick(location) },
+                        onFavoriteClick = { onFavoriteClick(location) },
+                        isSelected = location.id == selectedLocationId
+                    )
                 }
-                if (locations.loadState.append == LoadState.Loading) {
-                    item {
-                        Row(
-                            modifier = modifier
-                                .clip(MaterialTheme.shapes.medium)
-                                .background(
-                                    MaterialTheme.colorScheme.surfaceVariant
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline,
-                                    shape = MaterialTheme.shapes.medium
-                                )
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                }
+                Spacer(Modifier.height(8.dp))
             }
         }
     }
@@ -124,15 +91,17 @@ private fun FilterBar(
     modifier: Modifier = Modifier,
     filterText: String,
     filterTyping: (String) -> Unit,
-    onFilterByFavoriteClick: () -> Unit
+    onFilterByFavoriteClick: (Boolean) -> Unit,
+    favoritesSelected: Boolean
 ) {
-    Row (
+    Row(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface)
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         TextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.weight(1f),
             value = filterText,
             onValueChange = filterTyping,
             placeholder = { Text("Filter") },
@@ -152,17 +121,12 @@ private fun FilterBar(
                 }
             }
         )
-        Button(
-            onClick = onFilterByFavoriteClick,
-            colors = ButtonDefaults.buttonColors().copy(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-        ) {
-            Text("Favorites")
-        }
+        Switch(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            checked = favoritesSelected,
+            onCheckedChange = onFilterByFavoriteClick
+        )
     }
-
 }
 
 @Composable
@@ -171,7 +135,6 @@ private fun LocationItem(
     location: Location,
     onLocationClick: (Location) -> Unit,
     onFavoriteClick: (Location) -> Unit,
-    isFavorite: Boolean,
     isSelected: Boolean
 ) {
     Row(
@@ -203,7 +166,7 @@ private fun LocationItem(
         )
         Spacer(Modifier.width(6.dp))
         IconButton(onClick = { onFavoriteClick(location) }) {
-            if (isFavorite) {
+            if (location.isFavorite) {
                 Icon(
                     painter = painterResource(R.drawable.ic_favorite),
                     tint = Color.Red,
@@ -229,11 +192,11 @@ private fun LocationItemPreview() {
                 id = 8172,
                 country = "Netherlands",
                 name = "Robin Fleming",
-                coord = Coordinates(lon = 8.9, lat = 10.11)
+                coord = Coordinates(lon = 8.9, lat = 10.11),
+                isFavorite = true
             ),
             onLocationClick = {},
             onFavoriteClick = {},
-            isFavorite = true,
             isSelected = true
         )
     }
@@ -247,11 +210,11 @@ private fun LocationsListPreview() {
             pagedLocations = flow {},
             onLocationClick = {},
             onFavoriteClick = {},
-            favoriteLocations = listOf(),
             selectedLocationId = null,
             filterTyping = {},
             filterText = "",
-            onFilterByFavoriteClick = {}
+            onFilterByFavoriteClick = {},
+            favoritesSelected = false
         )
     }
 }

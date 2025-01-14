@@ -1,12 +1,11 @@
 package com.mtmilenkoff.data.di
 
-import com.mtmilenkoff.data.usecases.AddFavoriteUseCase
+import com.mtmilenkoff.data.usecases.ChangeFavoriteUseCase
 import com.mtmilenkoff.data.usecases.GetFavoriteLocationsUseCase
 import com.mtmilenkoff.data.usecases.GetLocationsUseCase
-import com.mtmilenkoff.data.usecases.RemoveFavoriteUseCase
 import com.mtmilenkoff.data.usecases.UpdateLocationsUseCase
 import com.mtmilenkoff.domain.repositories.LocationsRepository
-import com.mtmilenkoff.domain.usecases.AddFavorite
+import com.mtmilenkoff.domain.usecases.ChangeFavorite
 import com.mtmilenkoff.domain.usecases.GetFavoriteLocations
 import com.mtmilenkoff.domain.usecases.GetLocations
 import com.mtmilenkoff.domain.usecases.RemoveFavorite
@@ -36,12 +35,7 @@ object UseCasesModule {
     }
 
     @Provides
-    fun provideAddFavorite(repository: LocationsRepository): AddFavorite {
-        return AddFavoriteUseCase(repository)
-    }
-
-    @Provides
-    fun provideRemoveFavorite(repository: LocationsRepository): RemoveFavorite {
-        return RemoveFavoriteUseCase(repository)
+    fun provideChangeFavorite(repository: LocationsRepository): ChangeFavorite {
+        return ChangeFavoriteUseCase(repository)
     }
 }

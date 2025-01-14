@@ -5,7 +5,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.mtmilenkoff.data.api.LocationsApi
-import com.mtmilenkoff.data.entities.FavoriteLocationEntity
 import com.mtmilenkoff.data.entities.mapToDomainModel
 import com.mtmilenkoff.data.models.toEntity
 import com.mtmilenkoff.data.persistence.LocationsDao
@@ -31,7 +30,9 @@ class LocationsRepositoryImpl (
         when (val result = api.getLocations().makeCall()) {
             is Success -> {
                 result.data?.let { data ->
-                    locationsDao.deleteAndInsert(data.map { it.toEntity() })
+                    locationsDao.deleteAndInsert(
+                        data.map { it.toEntity() }
+                    )
                 } ?: run { emit(Failed(ErrorModel(404, "No data"))) }
                 emit(Success(Unit))
             }
@@ -46,28 +47,27 @@ class LocationsRepositoryImpl (
         }
     }
 
-    override fun getLocations(filter: String): Flow<PagingData<Location>> = Pager(
+    override fun getLocations(filter: String): Flow<PagingData<Location>> {
+        return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { locationsDao.getLocations(filter)}
-        ).flow.map { data -> data.map { it.mapToDomainModel() } }
-
-
-    override fun getFavoriteLocations(filter: String): Flow<List<Location>> =
-        locationsDao.observeFavoriteLocations(filter).map { locations ->
-            locations.map { it.mapToDomainModel() }
-        }
-
-    override fun addFavorite(id: Int) {
-        locationsDao.addFavorite(
-            FavoriteLocationEntity(id)
-        )
+        ).flow.map { data -> data.map { it.location.mapToDomainModel(it.favorite != null) } }
     }
 
-    override fun deleteFavorite(id: Int) {
-        locationsDao.deleteFavorite(id)
+
+    override fun getFavoriteLocations(filter: String): Flow<PagingData<Location>> = Pager(
+        config = PagingConfig(
+            pageSize = PAGE_SIZE,
+            enablePlaceholders = false
+        ),
+        pagingSourceFactory = { locationsDao.getPaginatedFavorites(filter)}
+    ).flow.map { data -> data.map { it.mapToDomainModel(true) } }
+
+    override fun changeFavorite(id: Int) {
+        locationsDao.changeFavorite(id)
     }
 }
 

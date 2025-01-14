@@ -10,9 +10,7 @@ interface LocationsRepository {
 
     fun getLocations(filter: String) : Flow<PagingData<Location>>
 
-    fun getFavoriteLocations(filter: String) : Flow<List<Location>>
+    fun getFavoriteLocations(filter: String) : Flow<PagingData<Location>>
 
-    fun addFavorite(id: Int)
-
-    fun deleteFavorite(id: Int)
+    fun changeFavorite(id: Int)
 }

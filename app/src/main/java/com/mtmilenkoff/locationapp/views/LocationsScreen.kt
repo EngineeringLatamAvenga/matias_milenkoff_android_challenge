@@ -36,14 +36,14 @@ private fun CompleteContent(modifier: Modifier = Modifier, viewModel: MainViewMo
     Row(modifier = modifier) {
         LocationsList(
             modifier = Modifier.weight(0.4f),
-            pagedLocations = viewModel.locations,
-            favoriteLocations = state.favoriteLocations,
+            pagedLocations = if (state.filterFavoritesSelected) viewModel.favoriteLocations else viewModel.locations,
             selectedLocationId = state.selectedLocation?.id,
             onLocationClick = { viewModel.onUiEvent(UIEvent.OnSelectLocation(it)) },
             onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) },
             filterTyping = { viewModel.onUiEvent(UIEvent.OnFilterTyping(it)) },
             filterText = filter,
-            onFilterByFavoriteClick = {}
+            onFilterByFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFilterByFavoriteClick(it))},
+            favoritesSelected = state.filterFavoritesSelected
         )
         LocationsMap(
             showTopBar = false,
@@ -68,14 +68,14 @@ private fun IndividualScreenContent(modifier: Modifier = Modifier, viewModel: Ma
     } else {
         Column(modifier = modifier) {
             LocationsList(
-                pagedLocations = viewModel.locations,
-                favoriteLocations = state.favoriteLocations,
+                pagedLocations = if (state.filterFavoritesSelected) viewModel.favoriteLocations else viewModel.locations,
                 selectedLocationId = state.selectedLocation?.id,
                 onLocationClick = { viewModel.onUiEvent(UIEvent.OnSelectLocation(it)) },
                 onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) },
                 filterTyping = { viewModel.onUiEvent(UIEvent.OnFilterTyping(it)) },
                 filterText = filter,
-                onFilterByFavoriteClick = {}
+                onFilterByFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFilterByFavoriteClick(it))},
+                favoritesSelected = state.filterFavoritesSelected
             )
         }
     }
