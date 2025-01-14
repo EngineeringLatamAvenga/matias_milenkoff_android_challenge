@@ -41,7 +41,7 @@ class MainViewModel @Inject constructor(
 
     sealed class UIEvent {
         data object OnUpdateLocations : UIEvent()
-        data class OnSelectLocation(val location: Location) : UIEvent()
+        data class OnSelectLocation(val location: Location?) : UIEvent()
         data class OnFavoriteLocation(val location: Location) : UIEvent()
     }
 
@@ -49,7 +49,7 @@ class MainViewModel @Inject constructor(
         when (event) {
             OnUpdateLocations -> updateLocations()
             is OnFavoriteLocation -> handleFavoriteLocation(event.location)
-            is OnSelectLocation -> TODO()
+            is OnSelectLocation -> selectLocation(event.location)
         }
     }
 
@@ -90,8 +90,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun selectLocation(location: Location) {
-        // todo
+    private fun selectLocation(location: Location?) {
+        uiState = uiState.copy(selectedLocation = location)
     }
 
     private fun handleFavoriteLocation(location: Location) {
