@@ -7,10 +7,10 @@ import com.mtmilenkoff.domain.models.Coordinates
 import com.mtmilenkoff.domain.models.Locations
 
 data class LocationsDto(
-    @SerializedName("_id")
-    val id: Int,
     val country: String,
     val name: String,
+    @SerializedName("_id")
+    val id: Int,
     val coord: CoordinatesDto
 )
 

@@ -44,7 +44,6 @@ android {
     packaging {
         resources {
             excludes.add("/META-INF/*")
-            excludes.add("**/*")
         }
     }
 }
@@ -52,8 +51,9 @@ android {
 dependencies {
     implementation(project(":domain"))
     ksp(libs.room.compiler)
-    ksp(libs.hilt.compiler)
     implementation(libs.bundles.network)
-    implementation(libs.bundles.hilt)
     implementation(libs.bundles.room)
+
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
 }

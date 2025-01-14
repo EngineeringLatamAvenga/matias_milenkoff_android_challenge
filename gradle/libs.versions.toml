@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.0.20"
+kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -18,7 +18,7 @@ hilt-androidx = "1.2.0"
 gson = "2.11.0"
 retrofit = "2.11.0"
 room = "2.6.1"
-ksp-plugin = "2.0.21-1.0.26"
+ksp-plugin = "2.1.0-1.0.29"
 okhttp = "4.12.0"
 splash = "1.2.0-alpha02"
 navigationCompose = "2.8.5"
@@ -42,15 +42,14 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 
 
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 ## Hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt" }
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "dagger-hilt" }
-androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-androidx" }
-androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hilt-androidx" }
+androidx-hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-androidx" }
+
 
 
 # Network

@@ -1,21 +1,26 @@
 package com.mtmilenkoff.locationapp
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.mtmilenkoff.locationapp.MainViewModel.UIEvent
 import com.mtmilenkoff.locationapp.ui.theme.LocationAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-class MainActivity(private val mainViewModel: MainViewModel) : ComponentActivity() {
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
 
         setContent {
             LocationAppTheme {

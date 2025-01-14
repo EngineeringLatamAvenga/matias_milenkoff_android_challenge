@@ -37,7 +37,7 @@ class MainViewModel @Inject constructor(
     private fun updateLocation() {
         viewModelScope.launch {
             executeUseCase(
-                useCase = updateLocationUseCase(),
+                useCase = updateLocationUseCase.invoke(),
                 onSuccess = {
                     uiState = uiState.copy(isLoading = false)
                 },

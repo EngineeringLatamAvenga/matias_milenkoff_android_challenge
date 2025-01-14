@@ -24,5 +24,5 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDao(mainDatabase: LocationsDatabase) = mainDatabase.dao
+    fun provideDao(db: LocationsDatabase) = db.dao
 }

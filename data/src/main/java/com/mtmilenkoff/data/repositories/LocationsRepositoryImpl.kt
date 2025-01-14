@@ -16,16 +16,17 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
 
-class LocationsRepositoryImpl(
+class LocationsRepositoryImpl (
     private val api: LocationsApi,
     private val locationsDao: LocationsDao
 ) : LocationsRepository {
 
     override fun updateLocations(): Flow<DataResult<Unit>> = flow {
+        emit(Loading)
         when (val result = api.getLocations().makeCall()) {
             is Success -> {
                 result.data?.let { data ->
-                    locationsDao.insertLocationsList(data.map { it.toEntity() })
+                    locationsDao.deleteAndInsert(data.map { it.toEntity() })
                 } ?: run { emit(Failed(ErrorModel(404, "No data"))) }
             }
 
