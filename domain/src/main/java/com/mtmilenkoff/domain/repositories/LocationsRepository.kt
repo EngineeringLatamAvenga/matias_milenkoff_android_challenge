@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface LocationsRepository {
     fun updateLocations() : Flow<DataResult<Unit>>
 
-    fun getLocations() : Flow<List<Location>>
+    fun getLocations(filter: String) : List<Location>
 
-    fun getFavoriteLocations() : Flow<List<Location>>
+    fun getFavoriteLocations(filter: String) : Flow<List<Location>>
 
     fun addFavorite(id: Int)
 

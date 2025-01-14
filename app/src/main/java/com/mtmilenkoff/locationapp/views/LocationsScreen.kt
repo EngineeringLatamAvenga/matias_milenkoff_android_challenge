@@ -38,7 +38,9 @@ private fun CompleteContent(modifier: Modifier = Modifier, viewModel: MainViewMo
             favoriteLocations = state.favoriteLocations,
             selectedLocationId = state.selectedLocation?.id,
             onLocationClick = { viewModel.onUiEvent(UIEvent.OnSelectLocation(it)) },
-            onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) }
+            onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) },
+            filterTyping = { viewModel.onUiEvent(UIEvent.OnFilterTyping(it)) },
+            filterText = state.filterText
         )
         LocationsMap(
             modifier = Modifier.weight(0.6f),
@@ -62,7 +64,9 @@ private fun IndividualScreenContent(modifier: Modifier = Modifier, viewModel: Ma
                 favoriteLocations = state.favoriteLocations,
                 selectedLocationId = state.selectedLocation?.id,
                 onLocationClick = { viewModel.onUiEvent(UIEvent.OnSelectLocation(it)) },
-                onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) }
+                onFavoriteClick = { viewModel.onUiEvent(UIEvent.OnFavoriteLocation(it)) },
+                filterTyping = { viewModel.onUiEvent(UIEvent.OnFilterTyping(it)) },
+                filterText = state.filterText
             )
         }
     }

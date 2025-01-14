@@ -12,6 +12,7 @@ import com.mtmilenkoff.domain.usecases.GetLocations
 import com.mtmilenkoff.domain.usecases.RemoveFavorite
 import com.mtmilenkoff.domain.usecases.UpdateLocations
 import com.mtmilenkoff.locationapp.MainViewModel.UIEvent.OnFavoriteLocation
+import com.mtmilenkoff.locationapp.MainViewModel.UIEvent.OnFilterTyping
 import com.mtmilenkoff.locationapp.MainViewModel.UIEvent.OnSelectLocation
 import com.mtmilenkoff.locationapp.MainViewModel.UIEvent.OnUpdateLocations
 import com.mtmilenkoff.locationapp.utils.executeUseCase
@@ -36,13 +37,15 @@ class MainViewModel @Inject constructor(
         val isLoading: Boolean = true,
         val locations: List<Location> = emptyList(),
         val favoriteLocations: List<Location> = emptyList(),
-        val selectedLocation: Location? = null
+        val selectedLocation: Location? = null,
+        val filterText: String = ""
     )
 
     sealed class UIEvent {
         data object OnUpdateLocations : UIEvent()
         data class OnSelectLocation(val location: Location?) : UIEvent()
         data class OnFavoriteLocation(val location: Location) : UIEvent()
+        data class OnFilterTyping(val text: String) : UIEvent()
     }
 
     fun onUiEvent(event: UIEvent) {
@@ -50,6 +53,7 @@ class MainViewModel @Inject constructor(
             OnUpdateLocations -> updateLocations()
             is OnFavoriteLocation -> handleFavoriteLocation(event.location)
             is OnSelectLocation -> selectLocation(event.location)
+            is OnFilterTyping -> filterLocations(event.text)
         }
     }
 
@@ -62,7 +66,6 @@ class MainViewModel @Inject constructor(
                 onSuccess = {
                     getLocations()
                     getFavoriteLocations()
-                    uiState = uiState.copy(isLoading = false)
                 },
                 onLoading = {
                     uiState = uiState.copy(isLoading = true)
@@ -76,15 +79,14 @@ class MainViewModel @Inject constructor(
 
     private fun getLocations() {
         viewModelScope.launch(Dispatchers.IO) {
-            getLocationsUseCase().collect {
-                uiState = uiState.copy(locations = it)
-            }
+            uiState = uiState.copy(locations = getLocationsUseCase(uiState.filterText))
+            uiState = uiState.copy(isLoading = false)
         }
     }
 
     private fun getFavoriteLocations() {
         viewModelScope.launch(Dispatchers.IO) {
-            getFavoriteLocationsUseCase().collect {
+            getFavoriteLocationsUseCase(uiState.filterText).collect {
                 uiState = uiState.copy(favoriteLocations = it)
             }
         }
@@ -102,5 +104,10 @@ class MainViewModel @Inject constructor(
                 addFavoriteUSeCase(location.id)
             }
         }
+    }
+
+    private fun filterLocations(filter: String) {
+        uiState = uiState.copy(filterText = filter)
+        getLocations()
     }
 }

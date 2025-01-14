@@ -6,5 +6,5 @@ import com.mtmilenkoff.domain.usecases.GetFavoriteLocations
 class GetFavoriteLocationsUseCase(
     private val repository: LocationsRepository
 ) : GetFavoriteLocations {
-    override operator fun invoke() = repository.getFavoriteLocations()
+    override operator fun invoke(filter: String) = repository.getFavoriteLocations(filter)
 }

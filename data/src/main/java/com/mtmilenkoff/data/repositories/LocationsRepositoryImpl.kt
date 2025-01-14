@@ -27,7 +27,7 @@ class LocationsRepositoryImpl (
         when (val result = api.getLocations().makeCall()) {
             is Success -> {
                 result.data?.let { data ->
-                    locationsDao.deleteAndInsert(data.map { it.toEntity() })
+                    locationsDao.deleteAndInsert(data.map { it.toEntity() }.sortedBy { it.name })
                 } ?: run { emit(Failed(ErrorModel(404, "No data"))) }
                 emit(Success(Unit))
             }
@@ -42,13 +42,11 @@ class LocationsRepositoryImpl (
         }
     }
 
-    override fun getLocations(): Flow<List<Location>> =
-        locationsDao.observeLocations().map { locations ->
-            locations.map { it.mapToDomainModel() }
-        }
+    override fun getLocations(filter: String): List<Location> =
+        locationsDao.observeLocations(filter).map { it.mapToDomainModel() }
 
-    override fun getFavoriteLocations(): Flow<List<Location>> =
-        locationsDao.observeFavoriteLocations().map { locations ->
+    override fun getFavoriteLocations(filter: String): Flow<List<Location>> =
+        locationsDao.observeFavoriteLocations(filter).map { locations ->
             locations.map { it.mapToDomainModel() }
         }
 

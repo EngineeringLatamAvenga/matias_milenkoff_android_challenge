@@ -1,7 +1,6 @@
 package com.mtmilenkoff.data.persistence
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -27,11 +26,16 @@ interface LocationsDao {
         insertLocationsList(postEntity)
     }
 
-    @Query("SELECT * FROM LocationsEntity")
-    fun observeLocations(): Flow<List<LocationsEntity>>
+    @Query("SELECT * FROM LocationsEntity WHERE name LIKE :filter || '%' ORDER BY name ASC, country ASC")
+    fun observeLocations(filter: String): List<LocationsEntity>
 
-    @Query("SELECT * FROM LocationsEntity INNER JOIN FavoriteLocationEntity ON LocationsEntity.id = FavoriteLocationEntity.id")
-    fun observeFavoriteLocations(): Flow<List<LocationsEntity>>
+    @Query(
+        "SELECT * FROM LocationsEntity " +
+            "INNER JOIN FavoriteLocationEntity ON LocationsEntity.id = FavoriteLocationEntity.id " +
+            "WHERE name LIKE :filter || '%' " +
+            "ORDER BY name ASC, country ASC"
+    )
+    fun observeFavoriteLocations(filter: String): Flow<List<LocationsEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addFavorite(location: FavoriteLocationEntity)
